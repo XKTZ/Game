@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Soldier>
+    <Tag name="name" type="string" value=""/>
+    <Tag name="originalCost" type="int" value=""/>
+    <Tag name="originalHP" type="int" value=""/>
+    <Tag name="originalAttack" type="int" value=""/>
+    <Tag name="smoke" type="boolean" value="false"/>
+    <Tag name="flash" type="boolean" value="false"/>
+    <Tag name="decoy" type="boolean" value="false"/>
+    <Tag name="desperateFight" type="boolean" value="false"/>
+    <Tag name="effects" type="list-Effect" value="inElement">
+        <Effect>
+            <Tag name="effectType" type="EffectType" value=""/>
+            <Tag name="content" type="EffectContent" value="inElement">
+                <Tag name="param" type="string" value=""/>
+                <Tag name="target" type="TargetType" value=""/>
+            </Tag>
+            <Tag name="condition" type="EffectCondition" valueAType="int" valueA="3" valueBType="int" valueB="5" symbol="<"/>
+        </Effect>
+    </Tag>
+</Soldier>

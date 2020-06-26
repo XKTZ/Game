@@ -1,9 +1,10 @@
 package xktz.game.objects.card.soldier;
 
+import xktz.game.attribute.buff.Buff;
 import xktz.game.objects.card.*;
-import xktz.game.effect.Effect;
+import xktz.game.attribute.effect.Effect;
+import xktz.game.serializable.SerializableList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SoldierCard implements Card {
@@ -12,11 +13,12 @@ public class SoldierCard implements Card {
     private Effect[] assaultEffects;
     private Effect[] crashEffects;
     private Effect[] keepEffects;
+    private Buff[] buffs;
 
     private boolean flash;
     private boolean smoke;
     private boolean decoy;
-    private boolean lifeInDeath;
+    private boolean desperateFight;
 
     private int originalAttack;
     private int originalHP;
@@ -27,12 +29,28 @@ public class SoldierCard implements Card {
 
     private final CardType cardType = CardType.SOLDIER;
 
+    public SoldierCard(Effect[] effects, Buff[] buffs, boolean flash, boolean smoke, boolean decoy, boolean desperateFight,
+                       int originalAttack, int originalHP, int originalCost, SoldierType soldierType, Rarity rarity) {
+        // set all variables
+        setEffects(effects);
+        setBuffs(buffs);
+        setFlash(flash);
+        setSmoke(smoke);
+        setDecoy(decoy);
+        setDesperateFight(desperateFight);
+        setOriginalAttack(originalAttack);
+        setOriginalHP(originalHP);
+        setOriginalCost(originalCost);
+        setSoldierType(soldierType);
+        setRarity(rarity);
+    }
+
     private void classifyEffects() {
         int maxLen = effects.length;
         // create three lists
-        List<Effect> keepEffectList = new ArrayList<Effect>(maxLen);
-        List<Effect> assaultEffectList = new ArrayList<Effect>(maxLen);
-        List<Effect> crashEffectList = new ArrayList<Effect>(maxLen);
+        List<Effect> keepEffectList = new SerializableList<>(maxLen);
+        List<Effect> assaultEffectList = new SerializableList<>(maxLen);
+        List<Effect> crashEffectList = new SerializableList<>(maxLen);
         // add the effects for crashing, attacking and keeping
         for (Effect effect: effects) {
             switch (effect.getEffectType()) {
@@ -52,8 +70,8 @@ public class SoldierCard implements Card {
         crashEffects = (Effect[]) crashEffectList.toArray();
     }
 
-    public BattleCard createBattleCard() {
-        return new BattleCard(this);
+    public BattleCard createBattleCard(int owner) {
+        return new BattleCard(this, owner);
     }
 
     public SoldierType getSoldierType() {
@@ -73,6 +91,7 @@ public class SoldierCard implements Card {
         classifyEffects();
     }
 
+
     public int getOriginalAttack() {
         return originalAttack;
     }
@@ -89,12 +108,12 @@ public class SoldierCard implements Card {
         this.originalHP = originalHP;
     }
 
-    public void setOriginalCost(int cost) {
-        this.originalCost = cost;
-    }
-
     public int getOriginalCost() {
         return originalCost;
+    }
+
+    public void setOriginalCost(int cost) {
+        this.originalCost = cost;
     }
 
     public CardType getCardType() {
@@ -133,11 +152,31 @@ public class SoldierCard implements Card {
         decoy = decoy;
     }
 
-    public boolean isLifeInDeath() {
-        return lifeInDeath;
+    public boolean isDesperateFight() {
+        return desperateFight;
     }
 
-    public void setLifeInDeath(boolean lifeInDeath) {
-        lifeInDeath = lifeInDeath;
+    public void setDesperateFight(boolean desperateFight) {
+        desperateFight = desperateFight;
+    }
+
+    public Buff[] getBuffs() {
+        return buffs;
+    }
+
+    public void setBuffs(Buff[] buffs) {
+        this.buffs = buffs;
+    }
+
+    public Effect[] getAssaultEffects() {
+        return assaultEffects;
+    }
+
+    public Effect[] getCrashEffects() {
+        return crashEffects;
+    }
+
+    public Effect[] getKeepEffects() {
+        return keepEffects;
     }
 }

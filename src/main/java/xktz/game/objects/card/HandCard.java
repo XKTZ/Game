@@ -1,9 +1,13 @@
 package xktz.game.objects.card;
 
-public class HandCard {
-    private Card card;
+import xktz.game.objects.GameObject;
+import xktz.game.objects.card.soldier.BattleCard;
 
-    public HandCard(Card card) {
+public class HandCard implements GameObject {
+    private Card card;
+    private int owner;
+
+    public HandCard(Card card, int owner) {
         this.card = card;
     }
 
@@ -13,9 +17,11 @@ public class HandCard {
 
     /**
      * Create a new battle card
+     *
      * @return the new battle card
      */
     public BattleCard createBattleCard() {
-        return new BattleCard(this);
+        return new BattleCard(this, owner);
     }
+
 }

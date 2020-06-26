@@ -22,9 +22,4 @@ public interface Card extends GameObject {
      */
     public Rarity getRarity();
 
-    /**
-     * Create a battle card
-     * @return
-     */
-    public BattleCard createBattleCard();
 }

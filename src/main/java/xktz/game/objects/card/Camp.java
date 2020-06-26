@@ -1,5 +1,7 @@
 package xktz.game.objects.card;
 
-public enum Camp {
+import xktz.game.objects.GameObject;
+
+public enum Camp implements GameObject {
     MERCENARY, US, UK, FRANCE, GERMAN, USSR, JAPAN, CHINA,
 }

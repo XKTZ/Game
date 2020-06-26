@@ -1,5 +1,7 @@
 package xktz.game.objects.card;
 
-public enum Rarity {
+import xktz.game.objects.GameObject;
+
+public enum Rarity implements GameObject {
     NORMAL, GOOD, ELITE, SPECIAL
 }

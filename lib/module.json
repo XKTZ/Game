@@ -1,0 +1,32 @@
+[
+  {
+    "name": "NAME_OF_SOLDIER",
+    "originalCost": -1,
+    "originalHP": -1,
+    "originalAttack": -1,
+    "flash": false,
+    "smoke": false,
+    "decoy": false,
+    "desperateFight": false,
+    "effects": [
+      {
+        "effectType": "type",
+        "effectContent": {
+          "target": "",
+          "param": ""
+        },
+        "effectCondition": {
+          "variableA": {
+            "type": "",
+            "value": ""
+          },
+          "variableB": {
+            "type": "",
+            "value": ""
+          },
+          "symbol": ""
+        }
+      }
+    ]
+  }
+]

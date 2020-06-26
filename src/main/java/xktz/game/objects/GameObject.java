@@ -1,6 +1,8 @@
 package xktz.game.objects;
 
 
-public interface GameObject {
+import java.io.Serializable;
+
+public interface GameObject extends Serializable {
 
 }
