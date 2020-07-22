@@ -8,6 +8,7 @@ import xktz.game.objects.GameObject;
 import xktz.game.objects.card.HandCard;
 import xktz.game.objects.stage.BattleStage;
 import xktz.game.objects.stage.Line;
+import xktz.game.util.StageUtil;
 
 import java.rmi.RemoteException;
 
@@ -37,7 +38,7 @@ public class BattleCard implements GameObject {
     private boolean desperate;
 
     // the battle stage
-    private BattleStage stageCardIn;
+    private BattleStage stage;
 
     public static final String EMPTY_STRING = "";
     public static final String ATTACK_FAIL_MESSAGE_SMOKE = "You can not attack a unit with smoke";
@@ -46,19 +47,24 @@ public class BattleCard implements GameObject {
     public static final String ATTACK_FAIL_TOO_FAR = "The target is too far to attack";
     public static final String ATTACK_FAIL_NO_ATTACK = "The attack of this unit is too low";
 
-    public BattleCard(HandCard handCard, int owner) {
+    public BattleCard(HandCard handCard, int owner) throws RemoteException {
         soldierCard = (SoldierCard) handCard.getCard();
         this.owner = owner;
+        this.stage = StageUtil.getStage(owner);
         initVariables();
     }
 
-    public BattleCard(HandCard handCard, int owner, int hp, int attack) {
+    public BattleCard(HandCard handCard, int owner, int hp, int attack) throws RemoteException {
+        this.owner = owner;
+        soldierCard = (SoldierCard) handCard.getCard();
+        this.stage = StageUtil.getStage(owner);
         initVariables(hp, attack);
     }
 
-    public BattleCard(SoldierCard card, int owner) {
+    public BattleCard(SoldierCard card, int owner) throws RemoteException {
         soldierCard = card;
         this.owner = owner;
+        this.stage = StageUtil.getStage(owner);
         initVariables();
     }
 
@@ -90,7 +96,7 @@ public class BattleCard implements GameObject {
     /**
      * Effect all effects in the battle card
      */
-    public void effect(BattleStage stage, BattleCard enemy, EffectSituation situation) throws RemoteException {
+    public void effect(BattleCard enemy, EffectSituation situation) throws RemoteException {
         switch (situation) {
             // if it is created, do the assault
             case CARD_CREATED:
@@ -111,7 +117,7 @@ public class BattleCard implements GameObject {
         }
     }
 
-    public AttackResult attack(BattleStage stage, BattleCard card) throws RemoteException {
+    public AttackResult attack(BattleCard card) throws RemoteException {
         // if card attack is smoke, return false
         if (card.isCanBeAttack()) {
             return new AttackResult(false, ATTACK_FAIL_MESSAGE_SMOKE);
@@ -121,8 +127,8 @@ public class BattleCard implements GameObject {
             return new AttackResult(false, ATTACK_FAIL_NO_ATTACK);
         }
         // get the line of this card
-        Line enemyLineIn = card.getLineIn(stage);
-        Line unitLineIn = this.getLineIn(stage);
+        Line enemyLineIn = card.getLineIn();
+        Line unitLineIn = this.getLineIn();
         // if this card is artillery, attack directly
         // if card is air bomber, attack directly
         if (type == SoldierType.ARTILLERY || type == SoldierType.AIR_BOMBER) {
@@ -148,7 +154,7 @@ public class BattleCard implements GameObject {
             if (enemyLineIn.isInDecoy() && !card.isDecoy()) {
                 return new AttackResult(false, ATTACK_FAIL_MESSAGE_DECOY);
             }
-            attackCard(stage, card);
+            attackCard(card);
             // return true;
             return new AttackResult(true, EMPTY_STRING);
         }
@@ -157,7 +163,7 @@ public class BattleCard implements GameObject {
         if (stage.getAllianceLine() == unitLineIn && stage.getEnemyLine() == enemyLineIn) {
             return new AttackResult(false, ATTACK_FAIL_TOO_FAR);
         }
-        attackCard(stage, card);
+        attackCard(card);
         // return true;
         return new AttackResult(true, EMPTY_STRING);
     }
@@ -167,7 +173,7 @@ public class BattleCard implements GameObject {
      *
      * @param card the card need to attack
      */
-    private void attackCard(BattleStage stage, BattleCard card) throws RemoteException {
+    private void attackCard(BattleCard card) throws RemoteException {
         int attackOther = card.getTotalAttack();
         // be attack, attack other
         beAttacked(attackOther, card, true, true);
@@ -179,10 +185,9 @@ public class BattleCard implements GameObject {
     /**
      * Get the line of the card in
      *
-     * @param stage the stage
      * @return the line in
      */
-    public Line getLineIn(BattleStage stage) throws RemoteException {
+    public Line getLineIn() throws RemoteException {
         if (stage.getFrontLine().has(this)) {
             return stage.getFrontLine();
         }
@@ -212,7 +217,7 @@ public class BattleCard implements GameObject {
      * @param enemy    the enemy attack
      */
     public void beAttacked(int attackHp, BattleCard enemy, boolean initiative) throws RemoteException {
-        beAttacked(attackHp, enemy, true);
+        beAttacked(attackHp, enemy, true, initiative);
     }
 
     /**
@@ -225,14 +230,14 @@ public class BattleCard implements GameObject {
     public void beAttacked(int attackHp, BattleCard enemy, boolean canEffect, boolean initiative) throws RemoteException {
         if (canEffect) {
             if (initiative) {
-                this.effect(stageCardIn, enemy, EffectSituation.ATTACK_OTHER_BEFORE);
+                this.effect(enemy, EffectSituation.ATTACK_OTHER_BEFORE);
             }
             this.hp -= attackHp;
             if (initiative) {
-                this.effect(stageCardIn, enemy, EffectSituation.ATTACK_OTHER_AFTER);
+                this.effect(enemy, EffectSituation.ATTACK_OTHER_AFTER);
             }
             if (attackHp > 0) {
-                this.effect(stageCardIn, enemy, EffectSituation.BE_ATTACK);
+                this.effect(enemy, EffectSituation.BE_ATTACK);
             }
         } else {
             this.hp -= attackHp;
@@ -246,9 +251,21 @@ public class BattleCard implements GameObject {
                 }
             } else {
                 // effect die
-                effect(stageCardIn, null, EffectSituation.CARD_DIE);
+                effect(null, EffectSituation.CARD_DIE);
             }
         }
+    }
+
+    /**
+     * move to a line
+     * @return success
+     */
+    public boolean move(Line line) throws RemoteException {
+        if (line.isFull()) {
+            return false;
+        }
+        Line lineIn = getLineIn();
+        return false;
     }
 
     /**
@@ -299,7 +316,7 @@ public class BattleCard implements GameObject {
     }
 
     public int getTotalAttack() throws RemoteException {
-        return stageCardIn.getBuffAttackOnCard(this) + this.attack;
+        return stage.getBuffAttackOnCard(this) + this.attack;
     }
 
     public int getAttack() {

@@ -203,7 +203,7 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, IBat
     public boolean callCardOnStage(BattleCard card) throws RemoteException {
         boolean success = createCardOnLine(allianceLine, card);
         if (success) {
-            card.effect(this, null, EffectSituation.CARD_CREATED);
+            card.effect(null, EffectSituation.CARD_CREATED);
         }
         return success;
     }

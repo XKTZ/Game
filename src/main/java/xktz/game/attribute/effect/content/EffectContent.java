@@ -233,7 +233,7 @@ public class EffectContent implements GameObject {
             card.addHp(hp);
             // if it is minus hp (hp < 0), effect "be attacked"
             if (hp < 0) {
-                card.effect(stage, null, EffectSituation.BE_ATTACK);
+                card.effect(null, EffectSituation.BE_ATTACK);
             }
         }
         card.addAttack(attack);

@@ -1,6 +1,5 @@
 #我的整体Markdown
 ## 我要做的
-1. 把beattack和addhp分开
 1. page
 1. turn end
 2. gui

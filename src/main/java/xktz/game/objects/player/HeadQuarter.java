@@ -10,7 +10,7 @@ public class HeadQuarter extends BattleCard {
 
     private int minusHpPerRound = 0;
 
-    public HeadQuarter(SoldierCard headQuarter, int owner) {
+    public HeadQuarter(SoldierCard headQuarter, int owner) throws RemoteException {
         super(headQuarter, owner);
     }
 
@@ -19,6 +19,6 @@ public class HeadQuarter extends BattleCard {
      */
     public void roundMinusHp() throws RemoteException {
         minusHpPerRound ++;
-        beAttacked(minusHpPerRound);
+        beAttacked(minusHpPerRound, false);
     }
 }

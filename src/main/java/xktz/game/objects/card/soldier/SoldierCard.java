@@ -5,6 +5,7 @@ import xktz.game.objects.card.*;
 import xktz.game.attribute.effect.Effect;
 import xktz.game.serializable.SerializableList;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class SoldierCard implements Card {
@@ -70,7 +71,7 @@ public class SoldierCard implements Card {
         crashEffects = (Effect[]) crashEffectList.toArray();
     }
 
-    public BattleCard createBattleCard(int owner) {
+    public BattleCard createBattleCard(int owner) throws RemoteException {
         return new BattleCard(this, owner);
     }
 

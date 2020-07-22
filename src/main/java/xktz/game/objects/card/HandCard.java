@@ -4,6 +4,8 @@ import xktz.game.objects.GameObject;
 import xktz.game.objects.card.soldier.BattleCard;
 import xktz.game.objects.card.soldier.SoldierCard;
 
+import java.rmi.RemoteException;
+
 public class HandCard implements GameObject {
     private Card card;
     private int owner;
@@ -19,7 +21,7 @@ public class HandCard implements GameObject {
         // check if it is instance of soldier card
         if (card instanceof SoldierCard) {
             // if it is, set soldier card to true
-            soldierCard = true;
+            this.soldierCard = true;
             // create a soldier card
             SoldierCard soldierCard = (SoldierCard) card;
             // set the hp & attack
@@ -37,7 +39,7 @@ public class HandCard implements GameObject {
      *
      * @return the new battle card
      */
-    public BattleCard createBattleCard() {
+    public BattleCard createBattleCard() throws RemoteException {
         return new BattleCard(this, owner, hp, attack);
     }
 
