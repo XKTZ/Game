@@ -87,7 +87,7 @@ public class EffectContent implements GameObject {
                 if (enemyLine.isEmpty() && !hasActive) {
                     return false;
                 } else {
-                    enemyLine.killAll();
+                    setAdditionsOnLine(params, stageMain, enemyLine);
                     return true;
                 }
                 // the addition to alliance
@@ -104,7 +104,7 @@ public class EffectContent implements GameObject {
                 if (frontLine.isEmpty() && !hasActive) {
                     return false;
                 } else {
-                    frontLine.killAll();
+                    setAdditionsOnLine(params, stageMain, enemyLine);
                     return true;
                 }
                 // the addition to one enemy

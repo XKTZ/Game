@@ -7,15 +7,12 @@ public class Buff implements GameObject {
 
     private int addAttack;
 
-    private int addHp;
-
     private int other;
 
     private BuffTargetType targetType;
 
-    public Buff(int addAttack, int addHp, int other, BuffTargetType targetType) {
+    public Buff(int addAttack, int other, BuffTargetType targetType) {
         this.addAttack = addAttack;
-        this.addHp = addHp;
         this.targetType = targetType;
         this.other = other;
     }
@@ -26,14 +23,6 @@ public class Buff implements GameObject {
 
     public void setAddAttack(int addAttack) {
         this.addAttack = addAttack;
-    }
-
-    public int getAddHp() {
-        return addHp;
-    }
-
-    public void setAddHp(int addHp) {
-        this.addHp = addHp;
     }
 
     public int getOther() {

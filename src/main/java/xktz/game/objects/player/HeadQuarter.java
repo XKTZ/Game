@@ -1,29 +1,24 @@
 package xktz.game.objects.player;
 
 import xktz.game.objects.GameObject;
+import xktz.game.objects.card.soldier.BattleCard;
+import xktz.game.objects.card.soldier.SoldierCard;
 
-public class HeadQuarter implements GameObject {
+import java.rmi.RemoteException;
 
-    private int hpQuarter = 0;
+public class HeadQuarter extends BattleCard {
+
     private int minusHpPerRound = 0;
 
-    public HeadQuarter() {
-        hpQuarter = 20;
-    }
-
-    /**
-     * minus the hp of the head quarter
-     * @param val the value need to minus
-     */
-    public void minusHp(int val) {
-        hpQuarter -= val;
+    public HeadQuarter(SoldierCard headQuarter, int owner) {
+        super(headQuarter, owner);
     }
 
     /**
      * minus the hp per round
      */
-    public void roundMinusHp() {
+    public void roundMinusHp() throws RemoteException {
         minusHpPerRound ++;
-        minusHp(minusHpPerRound);
+        beAttacked(minusHpPerRound);
     }
 }

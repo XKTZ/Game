@@ -1,9 +1,12 @@
 package xktz.game.objects.stage;
 
 import xktz.game.attribute.buff.Buff;
+import xktz.game.attribute.effect.condition.EffectSituation;
+import xktz.game.attribute.target.BuffTargetType;
 import xktz.game.objects.GameObject;
 import xktz.game.objects.card.HandCard;
 import xktz.game.objects.card.soldier.BattleCard;
+import xktz.game.objects.card.soldier.SoldierType;
 import xktz.game.objects.player.CardStack;
 import xktz.game.objects.player.HeadQuarter;
 import xktz.game.serializable.SerializableList;
@@ -12,11 +15,9 @@ import xktz.game.serializable.SerializableMap;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
-public class BattleStage extends UnicastRemoteObject implements GameObject, Remote {
+public class BattleStage extends UnicastRemoteObject implements GameObject, IBattleStage {
 
     private Line enemyLine;
     private Line frontLine;
@@ -26,14 +27,17 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, Remo
     private CardStack enemyStack;
 
     // the hand cards for alliance and enemy
-    private List<HandCard> allianceHand;
-    private List<HandCard> enemyHand;
+    private SerializableList<HandCard> allianceHand;
+    private SerializableList<HandCard> enemyHand;
 
     // the id of owner
     private int owner;
 
     private SerializableMap<BattleCard, Buff[]> allianceBuff;
     private SerializableMap<BattleCard, Buff[]> enemyBuff;
+
+    // turn on
+    private boolean start;
 
     public static final int LINE_MAX_LENGTH = 6;
 
@@ -42,7 +46,7 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, Remo
     HeadQuarter allianceHeadQuarter;
     HeadQuarter enemyHeadQuarter;
 
-    public BattleStage(HandCard[] cardAlliance, HandCard[] cardEnemy) throws RemoteException {
+    public BattleStage(HandCard[] cardAlliance, HandCard[] cardEnemy, int owner) throws RemoteException {
         // create three lines
         enemyLine = new Line();
         frontLine = new Line();
@@ -56,10 +60,15 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, Remo
         // create buff
         allianceBuff = new SerializableMap<>();
         enemyBuff = new SerializableMap<>();
+        // the owner
+        this.owner = owner;
     }
 
-    public BattleStage(CardStack allianceStack, CardStack enemyStack, Line enemyLine, Line frontLine, Line allianceLine,
-                       List<HandCard> allianceHand, List<HandCard> enemyHand, HeadQuarter allianceHeadQuarter, HeadQuarter enemyHeadQuarter)
+    public BattleStage(CardStack allianceStack, CardStack enemyStack, Line allianceLine, Line frontLine, Line enemyLine,
+                       SerializableList<HandCard> allianceHand, SerializableList<HandCard> enemyHand,
+                       SerializableMap<BattleCard, Buff[]> allianceBuff, SerializableMap<BattleCard, Buff[]> enemyBuff,
+                       HeadQuarter allianceHeadQuarter, HeadQuarter enemyHeadQuarter,
+                       int owner)
             throws RemoteException {
         this.allianceStack = allianceStack;
         this.enemyStack = enemyStack;
@@ -67,30 +76,14 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, Remo
         this.frontLine = frontLine;
         this.allianceLine = allianceLine;
         this.enemyHand = enemyHand;
+        this.enemyBuff = enemyBuff;
+        this.allianceBuff = allianceBuff;
         this.allianceHand = allianceHand;
         this.allianceHeadQuarter = allianceHeadQuarter;
         this.enemyHeadQuarter = enemyHeadQuarter;
+        this.owner = owner;
     }
 
-    /**
-     * Add a handcard into the front line
-     * @param handCard the hand card need to add into front line
-     * @return adding success or not (the front line is full or not)
-     */
-    public boolean addCardToAllianceLine(HandCard handCard) throws RemoteException{
-        // if the stage is full, return false (unsuccess)
-        if (allianceLine.getLength() >= LINE_MAX_LENGTH) {
-            return false;
-        }
-        // get the battle card
-        BattleCard battleCard = handCard.createBattleCard();
-        // add the card into line
-        allianceLine.add(battleCard);
-        // get the buffs of battle card
-        // add the buffs into map
-        allianceBuff.put(battleCard, battleCard.getBuffs());
-        return true;
-    }
 
     /**
      * Draw a card (alliance)
@@ -160,5 +153,135 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, Remo
 
     public boolean isOwningFrontLine() {
         return owner == enemyLine.getOwner();
+    }
+
+    /**
+     * Check the buff effect on the card
+     *
+     * @param card the card
+     * @return attack add
+     */
+    public int getBuffAttackOnCard(BattleCard card) throws RemoteException {
+        SoldierType type = card.getType();
+        // the  hp & attack
+        int result = 0;
+        // the buff map
+        Map<BattleCard, Buff[]> buffMap;
+        // check the owner of the card
+        if (this.owner == card.getOwner()) {
+            buffMap = allianceBuff;
+        } else {
+            buffMap = enemyBuff;
+        }
+        // iterate the buffs
+        for (Map.Entry<BattleCard, Buff[]> entry : buffMap.entrySet()) {
+            // iterate the buff in this card
+            for (Buff buff : entry.getValue()) {
+                // check if it is satisfy
+                if (buff.getTargetType().equals(BuffTargetType.ALL)) {
+                    // if it is all, directly add
+                    result += buff.getAddAttack();
+                } else if (buff.getTargetType().equals(BuffTargetType.AIR) &&
+                        (type.equals(SoldierType.AIR_BOMBER) || type.equals(SoldierType.AIR_FIGHTER))) {
+                    // if the soldier is air and the buff is to air
+                    result += buff.getAddAttack();
+                } else if (buff.getTargetType().toString().equals(type.toString())) {
+                    // if the type of soldier is equals the buff target type
+                    result += buff.getAddAttack();
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Call a card on alliance line
+     *
+     * @param card the card
+     * @return success or not
+     */
+    public boolean callCardOnStage(BattleCard card) throws RemoteException {
+        boolean success = createCardOnLine(allianceLine, card);
+        if (success) {
+            card.effect(this, null, EffectSituation.CARD_CREATED);
+        }
+        return success;
+    }
+
+    /**
+     * Create a card on stage
+     *
+     * @param line the line
+     * @param card the card
+     * @return success or not
+     */
+    public boolean createCardOnLine(Line line, BattleCard card) throws RemoteException {
+        if (line.isFull()) {
+            // return false
+            return false;
+        }
+        // create card on stage
+        line.add(card);
+        return true;
+    }
+
+    /**
+     * Refresh
+     */
+    public void refresh() throws RemoteException {
+        Line[] lines = {allianceLine, frontLine, enemyLine};
+        for (Line line : lines) {
+            // iterate the cards
+            for (BattleCard card : line.getCards()) {
+                // if card has no hp, remove it
+                if (card.getHp() <= 0) {
+                    line.remove(card);
+                }
+            }
+        }
+    }
+
+    public boolean isStart() throws RemoteException {
+        return start;
+    }
+
+    public void turnStart() throws RemoteException {
+        start = true;
+    }
+
+    public void turnFinish() throws RemoteException {
+        start = false;
+    }
+
+    public CardStack getAllianceStack() throws RemoteException {
+        return allianceStack;
+    }
+
+    public CardStack getEnemyStack() throws RemoteException {
+        return enemyStack;
+    }
+
+    public SerializableList<HandCard> getAllianceHand() throws RemoteException {
+        return allianceHand;
+    }
+
+    public SerializableList<HandCard> getEnemyHand() throws RemoteException {
+        return enemyHand;
+    }
+
+    public SerializableMap<BattleCard, Buff[]> getAllianceBuff() throws RemoteException {
+        return allianceBuff;
+    }
+
+    public SerializableMap<BattleCard, Buff[]> getEnemyBuff() throws RemoteException {
+        return enemyBuff;
+    }
+
+    public HeadQuarter getAllianceHeadQuarter() throws RemoteException {
+        return allianceHeadQuarter;
+    }
+
+    public HeadQuarter getEnemyHeadQuarter() throws RemoteException {
+        return enemyHeadQuarter;
     }
 }

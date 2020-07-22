@@ -6,6 +6,7 @@ import xktz.game.objects.card.soldier.BattleCard;
 import xktz.game.objects.card.soldier.SoldierType;
 import xktz.game.serializable.SerializableList;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class Line implements GameObject {
@@ -62,8 +63,10 @@ public class Line implements GameObject {
     /**
      * Additions to kill all the people on the line
      */
-    public void killAll() {
-        this.getCards().forEach(BattleCard::beKilled);
+    public void killAll() throws RemoteException {
+        for(BattleCard card: cards) {
+            card.beKilled();
+        }
     }
 
     /**
@@ -120,5 +123,26 @@ public class Line implements GameObject {
             }
         }
         return false;
+    }
+
+    /**
+     * Check if this line is full
+     * @return is full or not
+     */
+    public boolean isFull() {
+        return this.getLength() >= 6;
+    }
+
+    /**
+     * Remove the card
+     * @param card the card
+     */
+    public void remove(BattleCard card) {
+        for (int i = 0; i < getLength(); i++) {
+            if (this.get(i).equals(card)) {
+                this.cards.remove(card);
+                return;
+            }
+        }
     }
 }

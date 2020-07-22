@@ -36,6 +36,9 @@ public class BattleCard implements GameObject {
     // is desperate
     private boolean desperate;
 
+    // the battle stage
+    private BattleStage stageCardIn;
+
     public static final String EMPTY_STRING = "";
     public static final String ATTACK_FAIL_MESSAGE_SMOKE = "You can not attack a unit with smoke";
     public static final String ATTACK_FAIL_MESSAGE_AIR_PROTECTOR = "You can not attack a air bomber with protector";
@@ -49,6 +52,10 @@ public class BattleCard implements GameObject {
         initVariables();
     }
 
+    public BattleCard(HandCard handCard, int owner, int hp, int attack) {
+        initVariables(hp, attack);
+    }
+
     public BattleCard(SoldierCard card, int owner) {
         soldierCard = card;
         this.owner = owner;
@@ -56,12 +63,16 @@ public class BattleCard implements GameObject {
     }
 
     private void initVariables() {
+        initVariables(soldierCard.getOriginalHP(), soldierCard.getOriginalAttack());
+    }
+
+    private void initVariables(int hpSet, int attackSet) {
         canMove = false;
         // init the hp
-        this.hp = soldierCard.getOriginalHP();
-        this.maxHp = soldierCard.getOriginalHP();
+        this.hp = hpSet;
+        this.maxHp = hpSet;
         // init the attack
-        this.attack = soldierCard.getOriginalAttack();
+        this.attack = attackSet;
         // check if can be attacked
         this.canBeAttack = soldierCard.isSmoke();
         // init the soldier type
@@ -102,7 +113,7 @@ public class BattleCard implements GameObject {
 
     public AttackResult attack(BattleStage stage, BattleCard card) throws RemoteException {
         // if card attack is smoke, return false
-        if (card.isSmoke()) {
+        if (card.isCanBeAttack()) {
             return new AttackResult(false, ATTACK_FAIL_MESSAGE_SMOKE);
         }
         // if self have no attack, return false
@@ -113,20 +124,12 @@ public class BattleCard implements GameObject {
         Line enemyLineIn = card.getLineIn(stage);
         Line unitLineIn = this.getLineIn(stage);
         // if this card is artillery, attack directly
-        // if card is air bomber, could attack if there is no protector (if the target is in sky)
-        if (type == SoldierType.ARTILLERY || (type == SoldierType.AIR_BOMBER && (
-                card.getType() != SoldierType.AIR_BOMBER || enemyLineIn.has(
-                        SoldierType.AIR_FIGHTER,
-                        (Checker<BattleCard>) (c) -> {
-                            return !card.isSmoke();
-                        })
-        ))) {
+        // if card is air bomber, attack directly
+        if (type == SoldierType.ARTILLERY || type == SoldierType.AIR_BOMBER) {
             // directly attack this card
-            card.beAttacked(this.attack);
-            // do the effect
-            if (this.attack > 0) {
-                this.effect(stage, card, EffectSituation.ATTACK_OTHER);
-            }
+            card.beAttacked(this.getTotalAttack(), this, true, false);
+            // let can be attack true
+            this.canBeAttack = true;
             return new AttackResult(true, EMPTY_STRING);
         }
         // if this card is air fighter
@@ -135,9 +138,9 @@ public class BattleCard implements GameObject {
             if (card.getType() == SoldierType.AIR_BOMBER) {
                 // if there is a protector (air fighter), return false
                 if (enemyLineIn.has(SoldierType.AIR_FIGHTER,
-                        ((Checker<BattleCard>) (c) -> {
+                        (c) -> {
                             return !card.isSmoke();
-                        }))) {
+                        })) {
                     return new AttackResult(false, ATTACK_FAIL_MESSAGE_AIR_PROTECTOR);
                 }
             }
@@ -165,17 +168,12 @@ public class BattleCard implements GameObject {
      * @param card the card need to attack
      */
     private void attackCard(BattleStage stage, BattleCard card) throws RemoteException {
-        int attackOther = card.getAttack();
-        // effect
-        this.effect(stage, card, EffectSituation.ATTACK_OTHER);
+        int attackOther = card.getTotalAttack();
         // be attack, attack other
-        beAttacked(card.getAttack());
-        card.beAttacked(this.attack);
-        // check if self has minus hp
-        if (attackOther > 0) {
-            // if self has minus hp, effect "be attacked"
-            this.effect(stage, card, EffectSituation.BE_ATTACK);
-        }
+        beAttacked(attackOther, card, true, true);
+        card.beAttacked(this.getTotalAttack(), this, true, false);
+        // let can be attack true
+        this.canBeAttack = true;
     }
 
     /**
@@ -192,30 +190,65 @@ public class BattleCard implements GameObject {
     }
 
     /**
-     * be attacked
-     *
-     * @param attackHp the hp decrease
-     * @return the hp now
+     * be killed
      */
-    public void beAttacked(int attackHp) {
-        this.hp -= attackHp;
-        if (this.hp < 0) {
-            this.hp = 0;
-        }
-        if (desperate) {
-            desperate = false;
-            this.hp = 1;
-            if (this.maxHp < 0) {
-                this.maxHp = 1;
-            }
-        }
+    public void beKilled() throws RemoteException {
+        beAttacked(this.hp, false);
     }
 
     /**
-     * be killed
+     * be attacked
+     *
+     * @param attackHp the hp decrease
      */
-    public void beKilled() {
-        beAttacked(this.hp);
+    public void beAttacked(int attackHp, boolean initiative) throws RemoteException {
+        beAttacked(attackHp, null, initiative);
+    }
+
+    /**
+     * be attacked
+     *
+     * @param attackHp the hp decrease
+     * @param enemy    the enemy attack
+     */
+    public void beAttacked(int attackHp, BattleCard enemy, boolean initiative) throws RemoteException {
+        beAttacked(attackHp, enemy, true);
+    }
+
+    /**
+     * be attacked
+     *
+     * @param attackHp  the hp decrease
+     * @param canEffect can effect (be attacked)
+     * @param enemy     the enemy attack
+     */
+    public void beAttacked(int attackHp, BattleCard enemy, boolean canEffect, boolean initiative) throws RemoteException {
+        if (canEffect) {
+            if (initiative) {
+                this.effect(stageCardIn, enemy, EffectSituation.ATTACK_OTHER_BEFORE);
+            }
+            this.hp -= attackHp;
+            if (initiative) {
+                this.effect(stageCardIn, enemy, EffectSituation.ATTACK_OTHER_AFTER);
+            }
+            if (attackHp > 0) {
+                this.effect(stageCardIn, enemy, EffectSituation.BE_ATTACK);
+            }
+        } else {
+            this.hp -= attackHp;
+        }
+        if (this.hp <= 0) {
+            if (desperate) {
+                desperate = false;
+                this.hp = 1;
+                if (this.maxHp < 0) {
+                    this.maxHp = 1;
+                }
+            } else {
+                // effect die
+                effect(stageCardIn, null, EffectSituation.CARD_DIE);
+            }
+        }
     }
 
     /**
@@ -223,34 +256,27 @@ public class BattleCard implements GameObject {
      *
      * @param addHpVal the hp added
      */
-    public void addHp(int addHpVal) {
+    public void addHp(int addHpVal) throws RemoteException {
         this.hp += addHpVal;
         if (this.hp > this.maxHp) {
             this.hp = this.maxHp;
         }
-        // check if is died (need to desperate)
-        if (this.hp < 0 && desperate) {
-            desperate = false;
-            this.hp = 1;
-            // if max hp is 0, let max hp be 1
-            if (this.maxHp < 0) {
-                this.maxHp = 1;
-            }
-        }
     }
+
 
     /**
      * add the max hp of this card
      *
      * @param addMaxHp the max hp added
      */
-    public void addMaxHp(int addMaxHp) {
+    public void addMaxHp(int addMaxHp) throws RemoteException {
         this.maxHp += addMaxHp;
         this.hp += addMaxHp;
         if (this.maxHp <= 0) {
             this.beKilled();
         }
     }
+
 
     /**
      * add the attack of this card
@@ -270,6 +296,10 @@ public class BattleCard implements GameObject {
 
     public int getHp() {
         return hp;
+    }
+
+    public int getTotalAttack() throws RemoteException {
+        return stageCardIn.getBuffAttackOnCard(this) + this.attack;
     }
 
     public int getAttack() {
@@ -317,4 +347,7 @@ public class BattleCard implements GameObject {
         return desperate;
     }
 
+    public boolean isCanBeAttack() {
+        return canBeAttack;
+    }
 }

@@ -5,7 +5,8 @@ public enum EffectSituation {
     TURN_START,
     TURN_END,
     BE_ATTACK,
-    ATTACK_OTHER,
+    ATTACK_OTHER_BEFORE,
+    ATTACK_OTHER_AFTER,
     CARD_CREATED,
     CARD_DIE
 
