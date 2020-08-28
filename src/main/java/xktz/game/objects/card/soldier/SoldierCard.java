@@ -4,11 +4,14 @@ import xktz.game.attribute.buff.Buff;
 import xktz.game.objects.card.*;
 import xktz.game.attribute.effect.Effect;
 import xktz.game.serializable.SerializableList;
+import xktz.game.util.EffectFactory;
 
 import java.rmi.RemoteException;
 import java.util.List;
 
 public class SoldierCard implements Card {
+
+    private String name;
 
     private Effect[] effects;
     private Effect[] assaultEffects;
@@ -24,15 +27,17 @@ public class SoldierCard implements Card {
     private int originalAttack;
     private int originalHP;
     private int originalCost;
+    private int originalMoveCost;
     private SoldierType soldierType;
 
     private Rarity rarity;
 
     private final CardType cardType = CardType.SOLDIER;
 
-    public SoldierCard(Effect[] effects, Buff[] buffs, boolean flash, boolean smoke, boolean decoy, boolean desperateFight,
-                       int originalAttack, int originalHP, int originalCost, SoldierType soldierType, Rarity rarity) {
+    public SoldierCard(String name, Effect[] effects, Buff[] buffs, boolean flash, boolean smoke, boolean decoy, boolean desperateFight,
+                       int originalAttack, int originalHP, int originalCost, int moveCost, SoldierType soldierType, Rarity rarity) {
         // set all variables
+        setName(name);
         setEffects(effects);
         setBuffs(buffs);
         setFlash(flash);
@@ -42,6 +47,7 @@ public class SoldierCard implements Card {
         setOriginalAttack(originalAttack);
         setOriginalHP(originalHP);
         setOriginalCost(originalCost);
+        setOriginalMoveCost(moveCost);
         setSoldierType(soldierType);
         setRarity(rarity);
     }
@@ -53,7 +59,7 @@ public class SoldierCard implements Card {
         List<Effect> assaultEffectList = new SerializableList<>(maxLen);
         List<Effect> crashEffectList = new SerializableList<>(maxLen);
         // add the effects for crashing, attacking and keeping
-        for (Effect effect: effects) {
+        for (Effect effect : effects) {
             switch (effect.getEffectType()) {
                 case KEEP:
                     keepEffectList.add(effect);
@@ -66,9 +72,21 @@ public class SoldierCard implements Card {
             }
         }
         // set the three effects
-        keepEffects = (Effect[]) keepEffectList.toArray();
-        assaultEffects = (Effect[]) assaultEffectList.toArray();
-        crashEffects = (Effect[]) crashEffectList.toArray();
+        if (keepEffectList.size() == 0) {
+            keepEffects = new Effect[]{};
+        } else {
+            keepEffects = EffectFactory.toEffectArray(keepEffectList);
+        }
+        if (assaultEffectList.size() == 0) {
+            assaultEffects = new Effect[]{};
+        } else {
+            assaultEffects = EffectFactory.toEffectArray(assaultEffectList);
+        }
+        if (crashEffectList.size() == 0) {
+            crashEffects = new Effect[]{};
+        } else {
+            crashEffects = EffectFactory.toEffectArray(crashEffectList);
+        }
     }
 
     public BattleCard createBattleCard(int owner) throws RemoteException {
@@ -179,5 +197,22 @@ public class SoldierCard implements Card {
 
     public Effect[] getKeepEffects() {
         return keepEffects;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getOriginalMoveCost() {
+        return originalMoveCost;
+    }
+
+    public void setOriginalMoveCost(int originalMoveCost) {
+        this.originalMoveCost = originalMoveCost;
     }
 }

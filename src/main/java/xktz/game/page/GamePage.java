@@ -38,11 +38,9 @@ public class GamePage implements Page{
     public GamePage(int port) throws RemoteException, NotBoundException {
         // get
         this.registry = LocateRegistry.getRegistry(port);
-        System.out.println(registry.lookup("stage-1").getClass());
         // get the battle stage
         this.allianceStage = (IBattleStage) registry.lookup("stage-1");
         this.enemyStage = (IBattleStage) registry.lookup("stage-0");
-        System.out.println(allianceStage.getAllianceBuff());
     }
 
     public void init(List<Card> allianceCardList, List<Card> enemyCardList, int port) throws RemoteException, AlreadyBoundException {

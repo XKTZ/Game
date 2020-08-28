@@ -25,72 +25,15 @@ public class ScriptReader {
             throws IOException {
         // create the reader
         BufferedReader reader = new BufferedReader(new FileReader(scriptPath));
-        // String builder for import
-        StringBuilder importValue = new StringBuilder();
         StringBuilder codeValue = new StringBuilder();
-        // The implements list and the extends
-        List<String> implementsList = new ArrayList<>();
-        String extendsObj = "";
-        // init the code value
-        // starts code
-        boolean startsCode = false;
         // temp
         String temp;
-        // line count
-        int lineCount = 1;
         // read the file
         while ((temp = reader.readLine()) != null) {
-            // trim the temp
-            String trimedTemp = temp.trim();
-            // if length == 0, continue
-            if (trimedTemp.length() == 0) {continue;};
-            // if it starts with #, do the command
-            if (!startsCode && trimedTemp.charAt(0) == COMMAND_SYMBOL) {
-                // delete the command symbol and trim again
-                trimedTemp = trimedTemp.replace("#", "").trim().replaceAll("[ ]+", " ");
-                // split with space
-                String[] commands = trimedTemp.split(" ");
-                // check if there is command, if not, continue
-                if (commands.length == 0) {
-                    continue;
-                }
-                String commandKey = commands[0].toLowerCase();
-                // check different commands
-                switch (commandKey) {
-                    case COMMAND_IMPORT:
-                        commandLengthCheck(scriptName, commands, 2, lineCount);
-                        // check if there is enough length, if there is no, output and exit
-                        // if it is import, add import
-                        importValue.append("import ").append(commands[1]).append(END_LINE).append('\n');
-                        break;
-                    case COMMAND_EXTEND:
-                        commandLengthCheck(scriptName, commands, 2, lineCount);
-                        // if it is extend
-                        // change the extend value
-                        extendsObj = commands[1];
-                        break;
-                    case COMMAND_IMPLEMENT:
-                        commandLengthCheck(scriptName, commands, 2, lineCount);
-                        // if it is implement, add the implement value
-                        implementsList.add(commands[1]);
-                        break;
-                    case COMMAND_END_COMMAND_1:
-                    case COMMAND_END_COMMAND_2:
-                        startsCode = true;
-                        // init the code part
-                        initScriptClassStatement(codeValue, scriptName, extendsObj, implementsList);
-                        break;
-                }
-            } else {
-                // if it is not an empty line
-                if (temp.length() > 0) {
-                    // add into code
-                    codeValue.append(temp).append('\n');
-                }
-            }
-            lineCount ++;
+            codeValue.append(temp);
         }
-        return new StringBuilder().append(importValue).append(codeValue).append('}').toString();
+        reader.close();
+        return codeValue.toString();
     }
 
     /**

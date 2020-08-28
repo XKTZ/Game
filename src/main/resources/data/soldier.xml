@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Soldiers>
+    <Soldier name="eng_infantry">
+        <Rarity>NORMAL</Rarity>
+        <Type>INFANTRY</Type>
+        <Flash>true</Flash>
+        <Decoy>false</Decoy>
+        <Smoke>false</Smoke>
+        <Desperate>false</Desperate>
+        <Attack>3</Attack>
+        <Hp>3</Hp>
+        <Cost>1</Cost>
+        <MoveCost>1</MoveCost>
+        <Effects>
+            <Effect>effect_eng_soldier</Effect>
+        </Effects>
+        <Buffs>
+            <Buff>
+                <Target>INFANTRY</Target>
+                <Attack>3</Attack>
+            </Buff>
+        </Buffs>
+    </Soldier>
+</Soldiers>

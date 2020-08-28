@@ -32,6 +32,8 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, IBat
 
     // the id of owner
     private int owner;
+    private int moneyLeft;
+    private int maximumMoney;
 
     private SerializableMap<BattleCard, Buff[]> allianceBuff;
     private SerializableMap<BattleCard, Buff[]> enemyBuff;
@@ -247,6 +249,8 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, IBat
 
     public void turnStart() throws RemoteException {
         start = true;
+        maximumMoney ++;
+        moneyLeft = maximumMoney;
     }
 
     public void turnFinish() throws RemoteException {
@@ -283,5 +287,21 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, IBat
 
     public HeadQuarter getEnemyHeadQuarter() throws RemoteException {
         return enemyHeadQuarter;
+    }
+
+    @Override
+    public int getMoneyLeft() {
+        return moneyLeft;
+    }
+
+    @Override
+    public int getMaximumMoney() {
+        return maximumMoney;
+    }
+
+    @Override
+    public int minusMoneyLeft(int i) throws RemoteException {
+        moneyLeft -= i;
+        return moneyLeft;
     }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Effects>
+    <Effect name="effect_eng_soldier">
+        <EffectType>ASSAULT</EffectType>
+        <Condition>
+            <AType>EFFECT_SITUATION</AType>
+            <BType>EFFECT_SITUATION</BType>
+            <A>CARD_CREATED</A>
+            <Symbol>EQUALS</Symbol>
+        </Condition>
+        <EffectContent>
+            <Target>FRONT_LINE</Target>
+            <Params>+1/+1/MAX</Params>
+        </EffectContent>
+    </Effect>
+</Effects>

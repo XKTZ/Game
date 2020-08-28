@@ -198,7 +198,9 @@ public class BattleCard implements GameObject {
      * be killed
      */
     public void beKilled() throws RemoteException {
-        beAttacked(this.hp, false);
+        this.hp = 0;
+        this.stage.getAllianceBuff().remove(this);
+        this.effect(null, EffectSituation.CARD_DIE);
     }
 
     /**
@@ -250,8 +252,7 @@ public class BattleCard implements GameObject {
                     this.maxHp = 1;
                 }
             } else {
-                // effect die
-                effect(null, EffectSituation.CARD_DIE);
+                beKilled();
             }
         }
     }
@@ -261,11 +262,14 @@ public class BattleCard implements GameObject {
      * @return success
      */
     public boolean move(Line line) throws RemoteException {
-        if (line.isFull()) {
+        if (line.isFull() || !canMove || line != stage.getFrontLine() || stage.getMoneyLeft() < soldierCard.getOriginalMoveCost()) {
             return false;
         }
         Line lineIn = getLineIn();
-        return false;
+        lineIn.remove(this);
+        stage.getFrontLine().add(this);
+        stage.minusMoneyLeft(soldierCard.getOriginalMoveCost());
+        return true;
     }
 
     /**
@@ -366,5 +370,9 @@ public class BattleCard implements GameObject {
 
     public boolean isCanBeAttack() {
         return canBeAttack;
+    }
+
+    public SoldierCard getSoldierCard() {
+        return soldierCard;
     }
 }

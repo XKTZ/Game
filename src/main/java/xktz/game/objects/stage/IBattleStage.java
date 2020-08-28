@@ -37,4 +37,7 @@ public interface IBattleStage extends Remote {
     public SerializableMap<BattleCard, Buff[]> getEnemyBuff() throws RemoteException;
     public HeadQuarter getAllianceHeadQuarter() throws RemoteException;
     public HeadQuarter getEnemyHeadQuarter() throws RemoteException;
+    public int getMoneyLeft() throws RemoteException;
+    public int getMaximumMoney() throws RemoteException;
+    public int minusMoneyLeft(int i) throws RemoteException;
 }

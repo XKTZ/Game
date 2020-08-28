@@ -21,4 +21,12 @@ public class HeadQuarter extends BattleCard {
         minusHpPerRound ++;
         beAttacked(minusHpPerRound, false);
     }
+
+    /**
+     * Do nothing when it need to be killed
+     * @throws RemoteException
+     */
+    @Override
+    public void beKilled() throws RemoteException {
+    }
 }
