@@ -3,6 +3,7 @@ package xktz.game.attribute.effect.condition;
 import xktz.game.objects.GameObject;
 import xktz.game.objects.card.soldier.BattleCard;
 import xktz.game.objects.stage.BattleStage;
+import xktz.game.util.custom.script.CustomConditionFactory;
 
 import java.rmi.RemoteException;
 
@@ -49,6 +50,8 @@ public class EffectCondition implements GameObject {
                 return EffectSituation.valueOf(objectA).equals(situation);
             case OWNER_FRONT_LINE:
                 return stage.isOwningFrontLine();
+            case CUSTOM:
+                return CustomConditionFactory.getChecker(objectA).check(stage, card, situation);
         }
         return false;
     }

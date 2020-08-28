@@ -9,4 +9,5 @@ public enum EffectConditionType {
     NUM_BATTLE_STAGE_ENEMY_LINE,
     NUM_BATTLE_STAGE_ALLIANCE_LINE,
     OWNER_FRONT_LINE,
+    CUSTOM,
 }

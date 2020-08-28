@@ -21,7 +21,7 @@ public class ScriptReader {
 
     private static final Logger logger = LoggerFactory.getLogger(ScriptReader.class);
 
-    public static String readScript(String scriptPath, String scriptName)
+    public static String readScript(String scriptPath)
             throws IOException {
         // create the reader
         BufferedReader reader = new BufferedReader(new FileReader(scriptPath));

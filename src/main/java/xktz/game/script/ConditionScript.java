@@ -24,7 +24,7 @@ public class ConditionScript implements Script {
 
     public ConditionScript(String path, String className) {
         try {
-            this.scriptCode = ScriptReader.readScript(path, className);
+            this.scriptCode = ScriptReader.readScript(path);
         } catch (IOException e) {
             logger.error(SLF4J_ERROR_FORMAT, className, e.getMessage());
             System.exit(1);

@@ -28,7 +28,7 @@ public class EffectScript implements Script{
 
     public EffectScript(String path, String className) {
         try {
-            this.scriptCode = ScriptReader.readScript(path, className);
+            this.scriptCode = ScriptReader.readScript(path);
         } catch (IOException ioe) {
             logger.error(SLF4J_ERROR_FORMAT, className, ioe.getMessage());
             System.exit(1);
