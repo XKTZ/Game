@@ -108,28 +108,7 @@ public class JavaClass {
     }
 
     private void initTotalCode() {
-        StringBuilder totalCode = new StringBuilder();
-        // add the package (if there is package)
-        if (packageName.length() > 0) {
-            totalCode.append(String.format("package %s;", packageName));
-        }
-        // add the import (if there is import)
-        if (importString.length() > 0) {
-            totalCode.append(importString);
-        }
-        // add the class
-        totalCode.append(String.format("public class %s ", className));
-        // add the extends (if there is extends)
-        if (extendsName.length() > 0) {
-            totalCode.append(String.format("extends %s", extendsName));
-        }
-        // add the implements (if there is implements)
-        if (implementsName.length() > 0) {
-            totalCode.append(String.format("implements %s", implementsName));
-        }
-        // add the inside code
-        totalCode.append(String.format("{\n%s\n}", codeIn));
-        this.total = totalCode.toString();
+        this.total = codeIn;
     }
 
     private void initClazz() throws IOException, NotSuccessException, ClassNotFoundException, URISyntaxException {

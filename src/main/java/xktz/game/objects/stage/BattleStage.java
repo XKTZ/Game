@@ -190,6 +190,10 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, IBat
                 } else if (buff.getTargetType().toString().equals(type.toString())) {
                     // if the type of soldier is equals the buff target type
                     result += buff.getAddAttack();
+                } else if (card.getLineIn() == getAllianceLine() && buff.getTargetType() == BuffTargetType.ALLIANCE_LINE) {
+                    result += buff.getAddAttack();
+                } else if (card.getLineIn() == getFrontLine() && buff.getTargetType() == BuffTargetType.FRONT_LINE) {
+                    result += buff.getAddAttack();
                 }
             }
         }

@@ -22,4 +22,16 @@ public interface Card extends GameObject {
      */
     public Rarity getRarity();
 
+    /**
+     * Get the name of the card
+     * @return the name of the card
+     */
+    public String getName();
+
+    /**
+     * Get the cost of the card
+     * @return the cost
+     */
+    public int getCost();
+
 }

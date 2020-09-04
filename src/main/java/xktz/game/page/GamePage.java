@@ -69,7 +69,7 @@ public class GamePage implements Page{
     private HandCard[] mkHandCardList(List<Card> cardList, int owner) {
         HandCard[] cards = new HandCard[cardList.size()];
         for (int i = 0; i < cardList.size(); i++) {
-            cards[i] = new HandCard(cardList.get(i), owner);
+            cards[i] = new HandCard(cardList.get(i), allianceStage, owner);
         }
         return cards;
     }

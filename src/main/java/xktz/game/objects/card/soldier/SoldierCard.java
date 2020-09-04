@@ -28,14 +28,17 @@ public class SoldierCard implements Card {
     private int originalHP;
     private int originalCost;
     private int originalMoveCost;
+    private int originalDefense;
     private SoldierType soldierType;
 
     private Rarity rarity;
 
     private final CardType cardType = CardType.SOLDIER;
 
+
     public SoldierCard(String name, Effect[] effects, Buff[] buffs, boolean flash, boolean smoke, boolean decoy, boolean desperateFight,
-                       int originalAttack, int originalHP, int originalCost, int moveCost, SoldierType soldierType, Rarity rarity) {
+                       int originalAttack, int originalHP, int originalCost, int moveCost,
+                       int originalDefense, SoldierType soldierType, Rarity rarity) {
         // set all variables
         setName(name);
         setEffects(effects);
@@ -48,6 +51,7 @@ public class SoldierCard implements Card {
         setOriginalHP(originalHP);
         setOriginalCost(originalCost);
         setOriginalMoveCost(moveCost);
+        setOriginalDefense(originalDefense);
         setSoldierType(soldierType);
         setRarity(rarity);
     }
@@ -214,5 +218,17 @@ public class SoldierCard implements Card {
 
     public void setOriginalMoveCost(int originalMoveCost) {
         this.originalMoveCost = originalMoveCost;
+    }
+    public int getOriginalDefense() {
+        return originalDefense;
+    }
+
+    public void setOriginalDefense(int originalDefense) {
+        this.originalDefense = originalDefense;
+    }
+
+    @Override
+    public int getCost() {
+        return originalCost;
     }
 }

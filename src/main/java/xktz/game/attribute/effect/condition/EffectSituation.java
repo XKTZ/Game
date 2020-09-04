@@ -1,7 +1,7 @@
 package xktz.game.attribute.effect.condition;
 
 public enum EffectSituation {
-
+    STRATEGY,
     TURN_START,
     TURN_END,
     BE_ATTACK,

@@ -1,0 +1,17 @@
+{
+  "attack": {
+    "fromAnimation": [
+      "attack_1",
+      "be_attacked_1",
+      "attack_1"
+    ],
+    "toAnimation": [
+      "be_attacked_1",
+      "be_attacked_1",
+      "be_attacked_1"
+    ],
+    "timeDelay": 2000,
+    "fromPoint": [40, 50],
+    "toPoint": [40, 50]
+  }
+}

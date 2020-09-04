@@ -42,6 +42,7 @@ public class CardFactory {
                 int hp = Integer.parseInt(getValue(element, "Hp"));
                 int cost = Integer.parseInt(getValue(element, "Cost"));
                 int moveCost = Integer.parseInt(getValue(element, "MoveCost"));
+                int defense = Integer.parseInt(getValue(element, "Defense"));
                 Rarity rarity = Rarity.valueOf(getValue(element, "Rarity"));
                 SoldierType type = SoldierType.valueOf(getValue(element, "Type"));
                 boolean smoke = Boolean.parseBoolean(getValue(element, "Smoke"));
@@ -61,7 +62,7 @@ public class CardFactory {
                 }
                 SOLDIER_MAP.put(name, new SoldierCard(name,
                         EffectFactory.toEffectArray(effects), toBuffArray(buffs),
-                        flash, smoke, decoy, desperate, attack, hp, cost, moveCost, type, rarity));
+                        flash, smoke, decoy, desperate, attack, hp, cost, moveCost, defense, type, rarity));
             }
         } catch (Exception e) {
             e.printStackTrace();

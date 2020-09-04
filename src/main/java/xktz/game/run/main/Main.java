@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import xktz.game.fx.GamePanel;
+import xktz.game.page.GamePage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,9 +20,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/fx/Stage.fxml"));
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setScene(new Scene(new GamePanel(null), 800, 600));
         primaryStage.show();
     }
 }

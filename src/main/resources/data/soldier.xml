@@ -11,6 +11,7 @@
         <Hp>3</Hp>
         <Cost>1</Cost>
         <MoveCost>1</MoveCost>
+        <Defense>0</Defense>
         <Effects>
             <Effect>effect_eng_soldier</Effect>
         </Effects>

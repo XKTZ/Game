@@ -3,6 +3,8 @@ package xktz.game.objects.card;
 import xktz.game.objects.GameObject;
 import xktz.game.objects.card.soldier.BattleCard;
 import xktz.game.objects.card.soldier.SoldierCard;
+import xktz.game.objects.stage.BattleStage;
+import xktz.game.objects.stage.IBattleStage;
 
 import java.rmi.RemoteException;
 
@@ -15,7 +17,9 @@ public class HandCard implements GameObject {
 
     private boolean soldierCard;
 
-    public HandCard(Card card, int owner) {
+    private IBattleStage stage;
+
+    public HandCard(Card card, IBattleStage stageIn, int owner) {
         // set the card
         this.card = card;
         // check if it is instance of soldier card
@@ -28,6 +32,7 @@ public class HandCard implements GameObject {
             hp = soldierCard.getOriginalHP();
             attack = soldierCard.getOriginalAttack();
         }
+        this.stage = stageIn;
     }
 
     public Card getCard() {
@@ -43,4 +48,26 @@ public class HandCard implements GameObject {
         return new BattleCard(this, owner, hp, attack);
     }
 
+    /**
+     * Add into the line
+     *
+     * @return success
+     */
+    public BattleCard makeBattleCard() throws RemoteException {
+        if (stage.getAllianceLine().isFull()) {
+            return null;
+        }
+        BattleCard card = createBattleCard();
+        stage.getAllianceLine().add(createBattleCard());
+        stage.getAllianceHand().remove(this);
+        return card;
+    }
+
+    /**
+     * Return the name of the card
+     * @return name
+     */
+    public String getName() {
+        return card.getName();
+    }
 }

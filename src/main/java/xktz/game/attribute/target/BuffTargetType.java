@@ -7,5 +7,7 @@ public enum BuffTargetType {
     AIR,
     AIR_FIGHTER,
     AIR_BOMBER,
-    ALL
+    ALL,
+    FRONT_LINE,
+    ALLIANCE_LINE,
 }
