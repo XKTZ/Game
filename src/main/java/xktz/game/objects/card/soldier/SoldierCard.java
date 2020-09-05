@@ -4,7 +4,7 @@ import xktz.game.attribute.buff.Buff;
 import xktz.game.objects.card.*;
 import xktz.game.attribute.effect.Effect;
 import xktz.game.serializable.SerializableList;
-import xktz.game.util.EffectFactory;
+import xktz.game.util.game.EffectFactory;
 
 import java.rmi.RemoteException;
 import java.util.List;

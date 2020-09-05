@@ -1,0 +1,10 @@
+{
+  "attacker": {
+    "timeKeep": 1500,
+    "imageName": "art",
+    "startRefX": 40,
+    "startRefY": 40,
+    "endRefX": 40,
+    "endRefY": 40
+  }
+}

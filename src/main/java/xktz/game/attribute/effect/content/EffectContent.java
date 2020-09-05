@@ -1,7 +1,7 @@
 package xktz.game.attribute.effect.content;
 
 import xktz.game.attribute.effect.condition.EffectSituation;
-import xktz.game.util.ChoosingUtil;
+import xktz.game.util.fx.ChoosingUtil;
 import xktz.game.objects.GameObject;
 import xktz.game.objects.card.soldier.BattleCard;
 import xktz.game.objects.stage.BattleStage;

@@ -3,12 +3,11 @@ package xktz.game.objects.card.soldier;
 import xktz.game.attribute.buff.Buff;
 import xktz.game.attribute.effect.Effect;
 import xktz.game.attribute.effect.condition.EffectSituation;
-import xktz.game.callback.Checker;
 import xktz.game.objects.GameObject;
 import xktz.game.objects.card.HandCard;
 import xktz.game.objects.stage.BattleStage;
 import xktz.game.objects.stage.Line;
-import xktz.game.util.StageUtil;
+import xktz.game.util.game.StageUtil;
 
 import java.rmi.RemoteException;
 
@@ -106,25 +105,29 @@ public class BattleCard implements GameObject {
     /**
      * Effect all effects in the battle card
      */
-    public void effect(BattleCard enemy, EffectSituation situation) throws RemoteException {
+    public boolean effect(BattleCard enemy, EffectSituation situation) throws RemoteException {
+        boolean success = false;
         switch (situation) {
             // if it is created, do the assault
             case CARD_CREATED:
                 for (Effect effect : soldierCard.getAssaultEffects()) {
-                    effect.effectAssault(stage, this, situation);
+                    success = success || effect.effectAssault(stage, this, situation);
                 }
                 break;
             // if it is die, do the crash
             case CARD_DIE:
                 for (Effect effect : soldierCard.getCrashEffects()) {
-                    effect.effectCrash(stage, this, situation);
+                    success = success || effect.effectCrash(stage, this, situation);
                 }
-                // if it is other, do the kep
+                break;
+            // if it is other, do the kep
             default:
                 for (Effect effect : soldierCard.getKeepEffects()) {
-                    effect.effectKept(stage, this, enemy, situation);
+                    success = success || effect.effectKept(stage, this, enemy, situation);
                 }
+                break;
         }
+        return success;
     }
 
     public AttackResult attack(BattleCard card) throws RemoteException {
