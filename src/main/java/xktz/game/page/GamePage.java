@@ -62,7 +62,7 @@ public class GamePage implements Page{
     private void initRegistry() throws RemoteException, AlreadyBoundException {
         registry = LocateRegistry.createRegistry(port);
         // bind the registry (upload the rmi)c
-        registry.bind(String.format("stage-%d",allianceStage.getOwner()), allianceStage);
+        registry.bind(String.format("stage-%d", allianceStage.getOwner()), allianceStage);
         registry.bind(String.format("stage-%d", enemyStage.getOwner()), allianceStage);
     }
 

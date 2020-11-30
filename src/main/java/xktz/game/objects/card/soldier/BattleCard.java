@@ -272,21 +272,22 @@ public class BattleCard implements GameObject {
      * @return success
      */
     public boolean move(Line line) throws RemoteException {
-        if (this.soldierCard.getSoldierType() == SoldierType.AIR_BOMBER ||
-                this.soldierCard.getSoldierType() == SoldierType.AIR_FIGHTER) {
-            return false;
-        }
-        if (line.isFull() || !canMove || line != stage.getFrontLine() || stage.getMoneyLeft() < soldierCard.getOriginalMoveCost()) {
-            return false;
-        }
-        Line lineIn = getLineIn();
-        lineIn.remove(this);
-        stage.getFrontLine().add(this);
-        stage.minusMoneyLeft(soldierCard.getOriginalMoveCost());
-        if (this.soldierCard.getSoldierType() == SoldierType.INFANTRY || this.soldierCard.getSoldierType() == SoldierType.ARTILLERY) {
-            this.canAttack = false;
-        }
         return true;
+//        if (this.soldierCard.getSoldierType() == SoldierType.AIR_BOMBER ||
+//                this.soldierCard.getSoldierType() == SoldierType.AIR_FIGHTER) {
+//            return false;
+//        }
+//        if (line.isFull() || !canMove || line != stage.getFrontLine() || stage.getMoneyLeft() < soldierCard.getOriginalMoveCost()) {
+//            return false;
+//        }
+//        Line lineIn = getLineIn();
+//        lineIn.remove(this);
+//        stage.getFrontLine().add(this);
+//        stage.minusMoneyLeft(soldierCard.getOriginalMoveCost());
+//        if (this.soldierCard.getSoldierType() == SoldierType.INFANTRY || this.soldierCard.getSoldierType() == SoldierType.ARTILLERY) {
+//            this.canAttack = false;
+//        }
+//        return true;
     }
 
     /**

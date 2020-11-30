@@ -9,7 +9,7 @@ public class FxUnknownCard extends ImageView {
 
     public FxUnknownCard() {
         super(UNKNOWN_CARD);
-        this.setFitWidth(100);
-        this.setFitHeight(150);
+        this.setFitWidth(150);
+        this.setFitHeight(200);
     }
 }

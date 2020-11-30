@@ -6,6 +6,7 @@ import xktz.game.objects.card.Card;
 import xktz.game.objects.card.CardType;
 import xktz.game.objects.card.Rarity;
 import xktz.game.objects.stage.BattleStage;
+import xktz.game.objects.stage.IBattleStage;
 
 import java.rmi.RemoteException;
 
@@ -25,7 +26,13 @@ public class StrategyCard implements Card {
         this.name = name;
     }
 
-    public boolean effect(BattleStage stage) throws RemoteException {
+    /**
+     * Effect the strategy
+     * @param stage the stage
+     * @return success
+     * @throws RemoteException
+     */
+    public boolean effect(IBattleStage stage) throws RemoteException {
         return effect.effect(stage, null, null, EffectSituation.STRATEGY);
     }
 

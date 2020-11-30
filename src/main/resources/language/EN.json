@@ -1,8 +1,8 @@
 {
   "card": {
-    "eng_infantry": "英国步兵"
+    "eng_infantry": "M4 FIREFLY"
   },
   "description": {
-    "eng_infantry": "普通的英国步兵"
+    "eng_infantry": "Deal a half-life damage on an armor. Then copy it"
   }
 }

@@ -1,10 +1,14 @@
 package xktz.game.objects.card;
 
+import xktz.game.attribute.effect.condition.EffectSituation;
 import xktz.game.objects.GameObject;
 import xktz.game.objects.card.soldier.BattleCard;
 import xktz.game.objects.card.soldier.SoldierCard;
+import xktz.game.objects.card.strategy.StrategyCard;
 import xktz.game.objects.stage.BattleStage;
 import xktz.game.objects.stage.IBattleStage;
+import xktz.game.util.animation.AnimationUtil;
+import xktz.game.util.fx.GameUtil;
 
 import java.rmi.RemoteException;
 
@@ -40,6 +44,18 @@ public class HandCard implements GameObject {
     }
 
     /**
+     * Use the card
+     *
+     * @return the use
+     */
+    public boolean use() throws RemoteException {
+        GameUtil.showCardUse(card);
+        AnimationUtil.CONTROLLER_ALLIANCE.dropCard(0, this);
+        return true;
+//        return stage.useCard(this);
+    }
+
+    /**
      * Create a new battle card
      *
      * @return the new battle card
@@ -65,9 +81,26 @@ public class HandCard implements GameObject {
 
     /**
      * Return the name of the card
+     *
      * @return name
      */
     public String getName() {
         return card.getName();
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public void setAttack(int attack) {
+        this.attack = attack;
     }
 }

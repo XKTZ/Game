@@ -16,14 +16,21 @@ public class Animation {
         long time = System.currentTimeMillis();
         for (int i = 0; i < timeNodes.length; i++) {
             final int index = i;
+            // check the kind of animation
             if (timeNodes[i].getAnimationComponent() instanceof SingleObjectAnimationComponent) {
-                runAsynchronously(() -> timeNodes[index].getAnimationComponent().animateSingle(regionFrom, timeNodes[index].ref));
-            } else {
+                Pane regionEffect = timeNodes[i].getAnimationComponent().getInfluenceObject() == AnimationComponent.InfluenceObject.SELF?
+                        regionFrom : regionTo;
+                runAsynchronously(() -> timeNodes[index].getAnimationComponent().animateSingle(regionEffect, timeNodes[index].ref));
+            } else if (timeNodes[i].getAnimationComponent() instanceof MultipleObjectAnimationComponent) {
                 runAsynchronously(() -> timeNodes[index].getAnimationComponent().animateMutual(regionFrom, regionTo,
                         timeNodes[index].refStart, timeNodes[index].refEnd));
+            } else {
+                Pane regionEffect = timeNodes[i].getAnimationComponent().getInfluenceObject() == AnimationComponent.InfluenceObject.SELF?
+                        regionFrom : regionTo;
+                runAsynchronously(() -> timeNodes[index].getAnimationComponent().animateTransform(regionEffect));
             }
+            // sleep
             try {
-                time = System.currentTimeMillis();
                 Thread.sleep(differences[i]);
             } catch (InterruptedException ie) {
                 ie.printStackTrace();

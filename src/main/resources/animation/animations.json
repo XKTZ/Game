@@ -3,20 +3,20 @@
     "timeNodes": [
       {
         "animationName": "attacker",
-        "refStart": [40, 40],
-        "refEnd": [40, 50],
+        "refStart": [40, 30],
+        "refEnd": [20, 60],
         "timeStart": 0
       },
       {
         "animationName": "attacker",
-        "refStart": [40, 40],
-        "refEnd": [40, 50],
+        "refStart": [10, 30],
+        "refEnd": [30, 10],
         "timeStart": 100
       },
       {
         "animationName": "attacker",
-        "refStart": [40, 40],
-        "refEnd": [40, 50],
+        "refStart": [70, 20],
+        "refEnd": [40, 20],
         "timeStart": 400
       },
       {

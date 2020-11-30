@@ -9,6 +9,7 @@ public class SingleObjectAnimationComponent implements AnimationComponent{
     private String[] animation;
     private int timeDelay;
     private AnimationComponentImage[] animationComponentImages;
+    private InfluenceObject influenceObject;
 
     public SingleObjectAnimationComponent() {
     }
@@ -68,5 +69,14 @@ public class SingleObjectAnimationComponent implements AnimationComponent{
             }
         });
         thread.start();
+    }
+
+    @Override
+    public InfluenceObject getInfluenceObject() {
+        return influenceObject;
+    }
+
+    public void setInfluenceObject(InfluenceObject influenceObject) {
+        this.influenceObject = influenceObject;
     }
 }

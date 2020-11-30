@@ -5,6 +5,7 @@ import xktz.game.attribute.effect.condition.EffectSituation;
 import xktz.game.attribute.effect.content.EffectContent;
 import xktz.game.objects.card.soldier.BattleCard;
 import xktz.game.objects.stage.BattleStage;
+import xktz.game.objects.stage.IBattleStage;
 
 import java.rmi.RemoteException;
 
@@ -28,7 +29,7 @@ public class Effect {
      * @return success or not
      * @throws RemoteException
      */
-    public boolean effect(BattleStage stage, BattleCard card, BattleCard enemyCard, EffectSituation situation) throws RemoteException {
+    public boolean effect(IBattleStage stage, BattleCard card, BattleCard enemyCard, EffectSituation situation) throws RemoteException {
         if (effectType == EffectType.ASSAULT) {
             return effectAssault(stage, card, situation);
         }
@@ -45,7 +46,7 @@ public class Effect {
      * @param situation the situation
      * @return success or not
      */
-    public boolean effectAssault(BattleStage stage, BattleCard card, EffectSituation situation) throws RemoteException{
+    public boolean effectAssault(IBattleStage stage, BattleCard card, EffectSituation situation) throws RemoteException{
         if (situation == EffectSituation.CARD_CREATED && effectCondition.effectCheck(stage, card, situation)) {
             effectContent.effect(stage, card, null);
             return true;
@@ -60,7 +61,7 @@ public class Effect {
      * @param situation the situation
      * @return success or not
      */
-    public boolean effectCrash(BattleStage stage, BattleCard card, EffectSituation situation) throws RemoteException {
+    public boolean effectCrash(IBattleStage stage, BattleCard card, EffectSituation situation) throws RemoteException {
         if (situation == EffectSituation.CARD_DIE && effectCondition.effectCheck(stage, card, situation)) {
             effectContent.effect(stage, card, null);
             return true;
@@ -75,7 +76,7 @@ public class Effect {
      * @param situation the situation
      * @return success or not
      */
-    public boolean effectKept(BattleStage stage, BattleCard card, BattleCard enemyCard, EffectSituation situation) throws RemoteException {
+    public boolean effectKept(IBattleStage stage, BattleCard card, BattleCard enemyCard, EffectSituation situation) throws RemoteException {
         if (effectCondition.effectCheck(stage, card, situation)) {
             effectContent.effect(stage, card, enemyCard);
             return true;

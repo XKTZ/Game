@@ -5,6 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import xktz.fx.GamePanel;
 
+import javax.lang.model.type.NullType;
+import java.util.function.Consumer;
 public interface AnimationComponent {
 
     /**
@@ -12,7 +14,6 @@ public interface AnimationComponent {
      *
      * @param regionFrom from
      * @param regionTo   to
-     * @param panel      gamePanel
      * @param startRef   start point's ref
      * @param endRef     end point's ref
      */
@@ -40,6 +41,15 @@ public interface AnimationComponent {
     public default void animateTransform(Node node) {
     };
 
+    public default InfluenceObject getInfluenceObject() {
+        return InfluenceObject.SELF;
+    }
+
+    public static enum InfluenceObject {
+        SELF,
+        OTHER
+    }
+
     static void transform(int[] start, int[] end, Node node, int timeKeep, int frameDiffer) {
         int numbers = timeKeep / frameDiffer;
         double xOn = 1.0 * start[0], yOn = 1.0 * start[1];
@@ -55,7 +65,7 @@ public interface AnimationComponent {
                 node.setLayoutY(finalYOn);
             });
             try {
-                Thread.sleep(30);
+                Thread.sleep(frameDiffer);
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
                 System.exit(1);
@@ -63,5 +73,6 @@ public interface AnimationComponent {
         }
         node.setLayoutX(end[0]);
         node.setLayoutY(end[1]);
+        Platform.runLater(() -> {((Pane) node.getParent()).getChildren().remove(node);});
     }
 }

@@ -6,13 +6,15 @@ import xktz.game.attribute.target.BuffTargetType;
 import xktz.game.objects.GameObject;
 import xktz.game.objects.card.HandCard;
 import xktz.game.objects.card.soldier.BattleCard;
+import xktz.game.objects.card.soldier.SoldierCard;
 import xktz.game.objects.card.soldier.SoldierType;
+import xktz.game.objects.card.strategy.StrategyCard;
 import xktz.game.objects.player.CardStack;
 import xktz.game.objects.player.HeadQuarter;
 import xktz.game.serializable.SerializableList;
 import xktz.game.serializable.SerializableMap;
+import xktz.game.util.fx.GameUtil;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
@@ -110,6 +112,35 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, IBat
         }
     }
 
+    public boolean useCard(HandCard card) throws RemoteException {
+        if (this.getMoneyLeft() < card.getCard().getCost()) {
+            return false;
+        }
+        if (card.getCard() instanceof SoldierCard) {
+            if (this.getAllianceLine().isFull()) {
+                return false;
+            } else {
+                BattleCard btCard = card.createBattleCard();
+                boolean success = btCard.effect(null, EffectSituation.CARD_CREATED);
+                if (success) {
+                    this.minusMoneyLeft(card.getCard().getCost());
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            StrategyCard strategyCard = (StrategyCard) card.getCard();
+            boolean success = strategyCard.effect(this);
+            if (success) {
+                GameUtil.showCardUse(strategyCard);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     /**
      * Throw a card (alliance)
      */
@@ -149,7 +180,7 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, IBat
         if (frontLine.getOwner() == enemyLine.getOwner()) {
             result += frontLine.getLength();
         }
-        result += enemyLine.getOwner();
+        result += enemyLine.getLength();
         return result;
     }
 
@@ -253,7 +284,7 @@ public class BattleStage extends UnicastRemoteObject implements GameObject, IBat
 
     public void turnStart() throws RemoteException {
         start = true;
-        maximumMoney ++;
+        maximumMoney++;
         moneyLeft = maximumMoney;
     }
 

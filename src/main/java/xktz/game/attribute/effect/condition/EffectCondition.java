@@ -3,6 +3,7 @@ package xktz.game.attribute.effect.condition;
 import xktz.game.objects.GameObject;
 import xktz.game.objects.card.soldier.BattleCard;
 import xktz.game.objects.stage.BattleStage;
+import xktz.game.objects.stage.IBattleStage;
 import xktz.game.util.custom.script.CustomConditionFactory;
 
 import java.rmi.RemoteException;
@@ -30,7 +31,7 @@ public class EffectCondition implements GameObject {
      * @return success or not
      * @throws RemoteException
      */
-    public boolean effectCheck(BattleStage stage, BattleCard card, EffectSituation situation) throws RemoteException {
+    public boolean effectCheck(IBattleStage stage, BattleCard card, EffectSituation situation) throws RemoteException {
         switch (objectAType) {
             case INTEGER:
                 int aInt = Integer.parseInt(objectA);

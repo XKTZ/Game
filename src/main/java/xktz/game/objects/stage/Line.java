@@ -6,12 +6,13 @@ import xktz.game.objects.card.soldier.BattleCard;
 import xktz.game.objects.card.soldier.SoldierType;
 import xktz.game.serializable.SerializableList;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 
 public class Line implements GameObject {
-    private List<BattleCard> cards;
-    private int owner;
+    private SerializableList<BattleCard> cards;
+
     public Line() {
         // init the cards
         cards = new SerializableList<>(6);
@@ -57,7 +58,11 @@ public class Line implements GameObject {
 
 
     public int getOwner() {
-        return owner;
+        if (this.cards.size() == 0) {
+            return -1;
+        } else{
+            return this.cards.get(0).getOwner();
+        }
     }
 
     /**

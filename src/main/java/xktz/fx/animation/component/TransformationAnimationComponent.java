@@ -3,15 +3,22 @@ package xktz.fx.animation.component;
 import javafx.application.Platform;
 import javafx.scene.Node;
 
+import javax.lang.model.type.NullType;
+import java.util.function.Consumer;
+
 public class TransformationAnimationComponent implements AnimationComponent {
-    private int[] end;
-    private int timeKeep;
-    private static int FRAME_DIFFER = 30;
+    protected int[] end;
+    protected int timeKeep;
+    protected static int FRAME_DIFFER = 30;
+    protected Runnable afterThat;
 
     @Override
     public void animateTransform(Node node) {
         int[] start = {(int) node.getLayoutX(), (int) node.getLayoutY()};
-        AnimationComponent.transform(start, end, node, timeKeep, FRAME_DIFFER);
+        new Thread(() -> {
+            AnimationComponent.transform(start, end, node, timeKeep, FRAME_DIFFER);
+            afterThat.run();
+        }).start();
     }
 
     public int[] getEnd() {

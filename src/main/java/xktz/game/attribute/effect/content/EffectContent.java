@@ -1,6 +1,7 @@
 package xktz.game.attribute.effect.content;
 
 import xktz.game.attribute.effect.condition.EffectSituation;
+import xktz.game.objects.stage.IBattleStage;
 import xktz.game.util.fx.ChoosingUtil;
 import xktz.game.objects.GameObject;
 import xktz.game.objects.card.soldier.BattleCard;
@@ -22,7 +23,7 @@ public class EffectContent implements GameObject {
         this.target = targetType;
     }
 
-    public boolean effect(BattleStage stageMain, BattleCard mainCard, BattleCard enemyCard) throws RemoteException {
+    public boolean effect(IBattleStage stageMain, BattleCard mainCard, BattleCard enemyCard) throws RemoteException {
         // init three lines
         Line enemyLine = stageMain.getEnemyLine();
         Line allianceLine = stageMain.getAllianceLine();
@@ -33,6 +34,8 @@ public class EffectContent implements GameObject {
         String[] params = param.split(SPLITTER);
         // has active
         boolean hasActive = false;
+        // success
+        boolean success;
         switch (target) {
             // the addition to all of the cards
             case ALL:
@@ -110,25 +113,17 @@ public class EffectContent implements GameObject {
                 // the addition to one enemy
             case ENEMY:
                 // if there is no enemy on the stage, return unsuccess
-                BattleCard enemyChoose = ChoosingUtil.chooseCardByOwner(enemyLine.getOwner());
-                // if it is null, return false
-                if (enemyChoose == null) {
-                    return false;
-                }
-                // else, add addition
-                setAdditions(params, stageMain, enemyChoose);
-                return true;
+                success = ChoosingUtil.chooseCardByOwner(enemyLine.getOwner(), (enemyChoose) -> {
+                    setAdditions(params, stageMain, enemyChoose);
+                });
+                return success;
             // the addition to one alliance
             case ALLIANCE:
                 // if there is no enemy on the stage, return unsuccess
-                BattleCard allianceChoice = ChoosingUtil.chooseCardByOwner(allianceLine.getOwner());
-                // if it is null, return false
-                if (allianceChoice == null) {
-                    return false;
-                }
-                // else, add addition
-                setAdditions(params, stageMain, allianceChoice);
-                return true;
+                success = ChoosingUtil.chooseCardByOwner(allianceLine.getOwner(), (allianceChoose) -> {
+                    setAdditions(params, stageMain, allianceChoose);
+                });
+                return success;
             // draw a card
             case DRAW_CARD:
                 drawCard(stageMain);
@@ -158,7 +153,7 @@ public class EffectContent implements GameObject {
      *
      * @param stage the main stage
      */
-    private void drawCard(BattleStage stage) throws RemoteException {
+    private void drawCard (IBattleStage stage) throws RemoteException {
         // get the number of cards need to draw
         int numDraw = Integer.parseInt(param);
         while (numDraw > 0) {
@@ -173,7 +168,7 @@ public class EffectContent implements GameObject {
      *
      * @param stage the main stage
      */
-    private void dropCard(BattleStage stage) throws RemoteException {
+    private void dropCard (IBattleStage stage) throws RemoteException {
         // get the number of cards need to drop
         int numDrop = Integer.parseInt(param);
         while (numDrop > 0) {
@@ -188,7 +183,7 @@ public class EffectContent implements GameObject {
      *
      * @param stage the main stage
      */
-    private void throwCard(BattleStage stage) throws RemoteException {
+    private void throwCard (IBattleStage stage) throws RemoteException {
         // get the number of cards need to throw
         int numThrow = Integer.parseInt(param);
         while (numThrow > 0) {
@@ -203,7 +198,7 @@ public class EffectContent implements GameObject {
      * @param params the addition parameter
      * @param line   the line
      */
-    private void setAdditionsOnLine(String[] params, BattleStage stage, Line line) throws RemoteException {
+    private void setAdditionsOnLine(String[] params, IBattleStage stage, Line line) throws RemoteException {
         // check if is need to kill all people, if it is, just need to kill all
         if (param.equals("KILL")) {
             line.killAll();
@@ -219,7 +214,7 @@ public class EffectContent implements GameObject {
      * @param params the addition parameter
      * @param card   the card
      */
-    private void setAdditions(String[] params, BattleStage stage, BattleCard card) throws RemoteException {
+    private void setAdditions(String[] params, IBattleStage stage, BattleCard card) throws RemoteException {
         // check if need to kill
         // else, add or minus the values
         // get the add / minus in the parameters

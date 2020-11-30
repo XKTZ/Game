@@ -14,6 +14,7 @@ import java.rmi.RemoteException;
 public interface IBattleStage extends Remote {
     public void drawCard() throws RemoteException;
     public void dropCard() throws RemoteException;
+    public boolean useCard(HandCard card) throws RemoteException;
     public void throwCard() throws RemoteException;
     public Line getEnemyLine() throws RemoteException;
     public Line getFrontLine() throws RemoteException;
